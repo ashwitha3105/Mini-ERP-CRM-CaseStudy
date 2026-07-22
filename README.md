@@ -1,32 +1,390 @@
 # Mini ERP + CRM Operations Portal
 
-Full-stack case-study implementation for a wholesale/distribution workflow. It provides JWT login and role permissions, customer CRM with follow-ups, product inventory and stock movement logs, and sales challans with transactional stock reduction and product snapshots.
+## Full Stack Developer Placement Drive Case Study Submission
 
-## Local setup
+A production-ready ERP + CRM management system designed for wholesale and distribution businesses.
 
-Prerequisites: Node.js 20+ and PostgreSQL 14+.
+Built using:
 
-1. Create a PostgreSQL database named `mini_erp_crm`.
-2. Run `psql -d mini_erp_crm -f backend/db/schema.sql` and then `psql -d mini_erp_crm -f backend/db/seed.sql`.
-3. Copy `backend/.env.example` to `backend/.env` and set `DATABASE_URL` and a strong `JWT_SECRET`.
-4. Copy `frontend/.env.example` to `frontend/.env`.
-5. Run `npm install` in the project root, then `npm run install:all`, then `npm run dev`.
+- React (Vite) + TypeScript
+- Tailwind CSS
+- Node.js + Express
+- TypeScript Backend
+- PostgreSQL Database
+- JWT Authentication
+- Role-Based Access Control (RBAC)
 
-Open `http://localhost:5173`; API runs at `http://localhost:5000/api`. Test accounts are `admin@erp.local`, `sales@erp.local`, `warehouse@erp.local`, and `accounts@erp.local`, all with password `password`.
 
-## Docker quick start
+# 🌟 Executive Summary
 
-With Docker Desktop running, use `docker compose up --build`. This starts PostgreSQL, the API, and the frontend; then open `http://localhost:5173`. The database schema and sample data are initialized automatically on first startup. To reset local Docker data, run `docker compose down -v` and start again.
+The Mini ERP + CRM Operations Portal is a full-stack business management application that handles:
 
-## API and permissions
+- Customer Relationship Management (CRM)
+- Product Inventory Management
+- Stock Movement Tracking
+- Sales Challan Generation
+- Role-Based User Permissions
+- Automated Stock Validation
+- PDF Invoice Generation
 
-`POST /api/auth/login` is public. Customers are managed by Admin/Sales, stock and products by Admin/Warehouse, and challans by Admin/Sales/Accounts. API responses include validation errors, status codes, customer pagination/search, stock movement history, and stock-negative protection on both manual movements and confirmed challans.
 
-## Architecture and deployment
+The application simulates a real-world wholesale distribution workflow where different departments manage their responsibilities securely.
 
-React/Vite is a responsive SPA. Express/TypeScript exposes REST APIs and PostgreSQL owns relational data. Stock adjustments and confirmed challans lock product records and run in database transactions. Environment values are kept outside source control through `.env` files.
 
-For deployment, host the frontend on Vercel/Netlify/Render Static Site and the backend on Render/Railway/Fly; point `VITE_API_URL` to the deployed backend and set `FRONTEND_URL`, `DATABASE_URL`, and `JWT_SECRET` as platform environment variables. PostgreSQL can be Supabase, Neon, or Render Postgres.
+# 🏗️ System Architecture
 
-Sales analytics, product CRUD, challan detail views, downloadable invoice/challan PDFs, Docker Compose, and a GitHub Actions build workflow are included. Cancelling a confirmed challan safely restores stock and records an IN stock movement. Known limitations: payment settlement tracking, product image uploads/S3 storage, and automated test coverage are intentionally outside the assignment core scope.
 
+```
+                    React Frontend (Vite)
+                            
+        Dashboard | CRM | Inventory | Challans | Reports
+                            
+                         REST API
+                         JWT Auth
+
+                            ▼
+
+              Node.js + Express Backend
+
+        TypeScript | RBAC Middleware | API Validation
+        Stock Transactions | Business Logic
+
+                            ▼
+
+                  PostgreSQL Database
+
+ Customer | Products | Stock | Challans | Users | Logs
+
+```
+
+
+# 🔐 Authentication & User Roles
+
+The application implements secure JWT-based authentication with role permissions.
+
+
+## Test Accounts
+
+| Role | Email | Access |
+|------|-------|--------|
+| Admin | admin@erp.local | Full system access |
+| Sales | sales@erp.local | CRM + Challan management |
+| Warehouse | warehouse@erp.local | Inventory management |
+| Accounts | accounts@erp.local | Challan verification |
+
+
+Password:
+
+```
+password
+```
+
+
+# 🚀 Core Features
+
+
+## 1. Authentication & RBAC
+
+- JWT authentication
+- Password hashing using bcrypt
+- Protected API routes
+- Role-based authorization
+- Secure session handling
+
+
+---
+
+# 2. Customer CRM Module
+
+Features:
+
+- Customer creation and management
+- Search customers
+- Filter by customer type
+- Customer status tracking
+- Follow-up notes timeline
+- Sales activity tracking
+
+
+---
+
+# 3. Product Inventory Management
+
+Features:
+
+- Product CRUD operations
+- Current stock tracking
+- Minimum stock alerts
+- Stock IN / OUT management
+- Stock movement history
+
+
+Example:
+
+```
+Vendor Delivery  → Stock IN
+
+Sales Challan    → Stock OUT
+```
+
+
+---
+
+# 4. Sales Challan Workflow
+
+Core business logic:
+
+### Automatic Challan Number Generation
+
+Example:
+
+```
+CH-202607-0001
+```
+
+
+### Stock Validation
+
+Before confirming challan:
+
+- Check available quantity
+- Prevent negative inventory
+- Validate products
+
+
+### Transaction Processing
+
+When challan is confirmed:
+
+1. Stock quantity decreases
+2. Stock movement record created
+3. Challan status updated
+
+
+All operations are performed safely using database transactions.
+
+
+---
+
+# 🏆 Bonus Features Implemented
+
+
+## 📄 PDF Invoice Generation
+
+Includes:
+
+- Company details
+- Customer information
+- Product details
+- Quantity
+- Price
+- Total amount
+
+
+## 🐳 Docker Support
+
+Complete container setup:
+
+```
+docker-compose.yml
+```
+
+Runs:
+
+- Frontend
+- Backend
+- Database
+
+
+## 📮 Postman API Collection
+
+Available inside:
+
+```
+postman/
+```
+
+
+Contains ready-to-test API requests.
+
+
+## ⚙️ CI/CD Pipeline
+
+GitHub Actions workflow:
+
+```
+.github/workflows/
+```
+
+
+Automatically checks build status.
+
+
+# 🛠️ Local Installation
+
+
+## Prerequisites
+
+Install:
+
+- Node.js 20+
+- PostgreSQL 14+
+- npm
+
+
+---
+
+## Backend Setup
+
+
+```
+cd backend
+
+npm install
+
+npm run build
+
+npm start
+```
+
+
+Backend runs:
+
+```
+http://localhost:5000
+```
+
+
+---
+
+## Frontend Setup
+
+
+```
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+
+Frontend runs:
+
+```
+http://localhost:5173
+```
+
+
+# 🐳 Docker Deployment
+
+
+Run:
+
+
+```
+docker compose up --build
+```
+
+
+Application starts with:
+
+```
+Frontend
+Backend
+Database
+```
+
+
+# 📡 API Overview
+
+
+Authentication
+
+```
+POST /api/auth/login
+```
+
+
+Customers
+
+```
+GET /api/customers
+
+POST /api/customers
+```
+
+
+Products
+
+```
+GET /api/products
+
+POST /api/products/:id/adjust-stock
+```
+
+
+Challans
+
+```
+POST /api/challans
+
+PATCH /api/challans/:id/status
+```
+
+
+# 📂 Project Structure
+
+
+```
+Mini-ERP-CRM-CaseStudy
+
+│
+├── backend
+│   ├── src
+│   ├── database
+│   └── package.json
+│
+├── frontend
+│   ├── src
+│   └── package.json
+│
+├── database
+│
+├── docs
+│
+├── postman
+│
+├── docker-compose.yml
+│
+└── README.md
+
+```
+
+
+# 📸 Screenshots
+
+Add application screenshots here:
+
+```
+docs/Screenshots.md
+```
+
+
+# 🔮 Future Enhancements
+
+Possible improvements:
+
+- Payment tracking
+- Product image upload
+- Cloud storage integration
+- Advanced analytics dashboard
+- Automated testing
+- Notification system
+
+
+# 👨‍💻 Developer
+
+Ashwitha Koyyala
+
+Full Stack Developer Case Study 
