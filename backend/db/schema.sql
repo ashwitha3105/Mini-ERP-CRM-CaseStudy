@@ -1,0 +1,13 @@
+CREATE TYPE user_role AS ENUM ('Admin','Sales','Warehouse','Accounts');
+CREATE TYPE customer_status AS ENUM ('Lead','Active','Inactive','Blocked');
+CREATE TYPE customer_kind AS ENUM ('Retail','Wholesale','Distributor');
+CREATE TYPE challan_status AS ENUM ('Draft','Confirmed','Cancelled');
+CREATE TYPE movement_kind AS ENUM ('IN','OUT');
+CREATE TABLE users(id SERIAL PRIMARY KEY,name VARCHAR(120) NOT NULL,email VARCHAR(160) UNIQUE NOT NULL,password_hash TEXT NOT NULL,role user_role NOT NULL,is_active BOOLEAN DEFAULT true,created_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE customers(id SERIAL PRIMARY KEY,name VARCHAR(120) NOT NULL,mobile VARCHAR(30) NOT NULL,email VARCHAR(160),business_name VARCHAR(160),gst_number VARCHAR(30),customer_type customer_kind NOT NULL,address TEXT,status customer_status NOT NULL DEFAULT 'Active',follow_up_date DATE,notes TEXT,created_at TIMESTAMPTZ DEFAULT now(),updated_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE products(id SERIAL PRIMARY KEY,product_name VARCHAR(160) NOT NULL,sku VARCHAR(80) UNIQUE NOT NULL,category VARCHAR(100),unit_price NUMERIC(12,2) NOT NULL,current_stock INTEGER NOT NULL DEFAULT 0,minimum_stock INTEGER NOT NULL DEFAULT 0,warehouse_location VARCHAR(100),created_at TIMESTAMPTZ DEFAULT now(),updated_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE stock_movements(id SERIAL PRIMARY KEY,product_id INTEGER REFERENCES products(id),movement_type movement_kind NOT NULL,quantity INTEGER NOT NULL CHECK(quantity>0),reason TEXT NOT NULL,created_by INTEGER REFERENCES users(id),created_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE challans(id SERIAL PRIMARY KEY,challan_number VARCHAR(40) UNIQUE NOT NULL,customer_id INTEGER REFERENCES customers(id),status challan_status NOT NULL DEFAULT 'Draft',notes TEXT,created_by INTEGER REFERENCES users(id),created_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE challan_items(id SERIAL PRIMARY KEY,challan_id INTEGER REFERENCES challans(id) ON DELETE CASCADE,product_id INTEGER REFERENCES products(id),product_name VARCHAR(160) NOT NULL,sku VARCHAR(80) NOT NULL,unit_price NUMERIC(12,2) NOT NULL,quantity INTEGER NOT NULL CHECK(quantity>0));
+CREATE TABLE follow_ups(id SERIAL PRIMARY KEY,customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE,follow_up_date DATE NOT NULL,notes TEXT NOT NULL,status VARCHAR(20) NOT NULL DEFAULT 'Pending' CHECK(status IN ('Pending','Completed')),created_by INTEGER REFERENCES users(id),created_at TIMESTAMPTZ DEFAULT now(),completed_at TIMESTAMPTZ);
+CREATE TABLE activities(id SERIAL PRIMARY KEY,user_id INTEGER REFERENCES users(id),action TEXT NOT NULL,entity_type VARCHAR(40),entity_id INTEGER,created_at TIMESTAMPTZ NOT NULL DEFAULT now());

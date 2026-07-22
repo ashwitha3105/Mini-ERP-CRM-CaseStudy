@@ -1,0 +1,2 @@
+import {NextFunction,Response} from 'express'; import {AuthRequest} from '../types'; import {verifyToken} from '../utils/jwt';
+export const authenticate=(req:AuthRequest,res:Response,next:NextFunction)=>{try {const token=req.headers.authorization?.replace('Bearer ','')||req.cookies?.token;if(!token)return res.status(401).json({success:false,message:'Authentication required'});req.user=verifyToken(token);next();}catch{return res.status(401).json({success:false,message:'Invalid or expired token'});}};

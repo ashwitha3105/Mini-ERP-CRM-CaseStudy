@@ -1,0 +1,1 @@
+import {Router} from 'express';import * as c from '../controllers/auth.controller';import {authenticate} from '../middleware/auth';import {validate} from '../middleware/validator';import {loginRules} from '../validations';const r=Router();r.post('/login',loginRules,validate,c.login);r.get('/me',authenticate,c.me);export default r;

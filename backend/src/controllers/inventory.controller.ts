@@ -1,0 +1,2 @@
+import {Response,NextFunction} from 'express';import {AuthRequest} from '../types';import * as s from '../services/inventory.service';import {ok} from '../utils/response';
+export const list=async(req:AuthRequest,res:Response,n:NextFunction)=>{try{ok(res,await s.movements(req.query.productId?+req.query.productId:undefined));}catch(e){n(e);}};export const adjust=async(req:AuthRequest,res:Response,n:NextFunction)=>{try{ok(res,await s.adjustStock(req.body,req.user!.id),201);}catch(e){n(e);}};

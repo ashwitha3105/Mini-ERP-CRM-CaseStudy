@@ -1,0 +1,1 @@
+export interface Customer {id:number;name:string;mobile:string;email?:string;business_name?:string;gst_number?:string;customer_type:string;address?:string;status:string;follow_up_date?:string;notes?:string;}

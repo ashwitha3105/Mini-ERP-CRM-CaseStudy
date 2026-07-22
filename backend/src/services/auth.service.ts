@@ -1,0 +1,2 @@
+import bcrypt from 'bcrypt'; import {db} from '../config/database'; import {signToken} from '../utils/jwt';
+export async function login(email:string,password:string){const {rows}=await db.query('SELECT * FROM users WHERE email=$1 AND is_active=true',[email.toLowerCase()]);const user=rows[0];if(!user||!(await bcrypt.compare(password,user.password_hash))){const e:any=new Error('Invalid email or password');e.status=401;throw e;}const safe={id:user.id,name:user.name,email:user.email,role:user.role};return {user:safe,token:signToken(safe)};}
